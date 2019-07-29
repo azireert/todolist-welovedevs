@@ -1,6 +1,7 @@
 import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card'
 import React from 'react';
+import logo from '../../avatar.jpg';
 import './ListDetail.css';
 
 class ListDetail extends React.Component{
@@ -11,7 +12,7 @@ class ListDetail extends React.Component{
         const workers = this.props.workers;
         const listItems = workers.map((workers) =>
             <Card  key={workers.id} style={{ width: '18rem', marginBottom: '2em' }}>
-                <Card.Img variant="top" src="holder.js/100px180" />
+                <Card.Img variant="top" src={logo} />
                 <Card.Body>
                     <Card.Title>{workers.firstname} {workers.lastname}</Card.Title>
                     <Card.Text>
