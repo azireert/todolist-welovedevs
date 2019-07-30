@@ -1,6 +1,7 @@
 import React from 'react';
 import './List.css';
 import ListDetail from "../ListDetail/ListDetail";
+import firebase from '../../firebase/firebase.js';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import {Button} from "react-bootstrap";
@@ -17,85 +18,49 @@ class List extends React.Component{
     constructor(){
         super();
         this.state = {
-            list : [
-                {
-                    id: 1,
-                    firstname: 'Damien ',
-                    lastname: 'Cavaillès',
-                    job: 'Co-Founder',
-                },
-                {
-                    id: 2,
-                    firstname: 'Vincent',
-                    lastname: 'Cotro',
-                    job: 'Co-Founder',
-                },
-                {
-                    id: 3,
-                    firstname: 'Thomas',
-                    lastname: 'Grivet',
-                    job: 'React developer',
-                },
-                {
-                    id: 4,
-                    firstname: 'Martin',
-                    lastname: 'Lutton',
-                    job: 'Recruiter',
-                },
-                {
-                    id: 5,
-                    firstname: 'Alexis',
-                    lastname: 'Camus',
-                    job: 'Customer success',
-                },
-                {
-                    id: 6,
-                    firstname: 'Nicolas',
-                    lastname: 'Detrez',
-                    job: 'Content Specialist',
-                },
-                {
-                    id: 7,
-                    firstname: 'Clement',
-                    lastname: 'Devos',
-                    job: 'JS Developer',
-                },
-                {
-                    id: 8,
-                    firstname: 'Quentin',
-                    lastname: 'Tournier',
-                    job: 'React developer',
-                },
-                {
-                    id: 9,
-                    firstname: 'Pierre',
-                    lastname: 'Willame',
-                    job: 'Customer success',
-                },
-                {
-                    id: 10,
-                    firstname: 'Alexandre',
-                    lastname: 'Brisbout',
-                    job: 'Customer',
-                }
-            ]
+            list : []
         };
         this.delete = this.delete.bind(this);
         this.addWorker = this.addWorker.bind(this);
     }
 
+    componentDidMount() {
+        const workersRef = firebase.database().ref('/');
+        workersRef.on('value',(snapshot) => {
+            let workers = snapshot.val();
+            let newState = [];
+            for ( let worker in workers) {
+                newState.push({
+                    id: workers[worker].id,
+                    firstname: workers[worker].firstname,
+                    lastname: workers[worker].lastname,
+                    job: workers[worker].job
+                });
+            }
+
+            this.setState({
+                list: newState
+            });
+        });
+
+    }
+
     addWorker(e) {
         var newWorker = {
-            id: Date.now(),
+            id: this.state.list.length+1,
             firstname: this.state.firstname,
             lastname: this.state.lastname,
             job: this.state.job
         };
-        this.setState((prevState) => {
+        /*this.setState((prevState) => {
             return {
                 list: prevState.list.concat(newWorker)
             };
-        });
+        });*/
+
+        this.state.list.push(newWorker);
+
+        firebase.database().ref('/').set(this.state.list);
 
 
         this.setState( {firstname : "", lastname: "", job: ""});
@@ -105,10 +70,11 @@ class List extends React.Component{
     }
 
     delete(id){
-        console.log(id);
         this.setState(prevState => ({
             list: prevState.list.filter(el => el.id !== id )
         }));
+        let idRef = id-1;
+        firebase.database().ref('/' + idRef).remove();
 
     }
 
@@ -119,7 +85,7 @@ class List extends React.Component{
                     <Col></Col>
                     <Col>
                         <Form>
-                            <Form.Group controlId="formGroupFN" ref="myFrom">
+                            <Form.Group controlId="formGroupFN">
                                 <Form.Label>Prénom</Form.Label>
                                 <Form.Control type="text" placeholder="Entrez votre prénom"
                                               value={this.state.firstname}
