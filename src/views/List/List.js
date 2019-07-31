@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
+import { connect } from 'react-redux'
 
 
 
@@ -40,6 +41,7 @@ class List extends React.Component{
 
             this.setState({
                 list: newState
+
             });
         });
 
@@ -52,13 +54,11 @@ class List extends React.Component{
             lastname: this.state.lastname,
             job: this.state.job
         };
-        /*this.setState((prevState) => {
-            return {
-                list: prevState.list.concat(newWorker)
-            };
-        });*/
 
-        this.state.list.push(newWorker);
+        //this.state.list.push(newWorker);
+
+        const action = { type: "ADD_WORKER", list: this.state.list, value: newWorker }
+        this.props.dispatch(action)
 
         firebase.database().ref('/').set(this.state.list);
 
@@ -121,4 +121,16 @@ class List extends React.Component{
     }
 }
 
-export default List;
+const mapStateToProps = (state) => {
+    return {
+        list: state.list
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        dispatch: (action) => { dispatch(action) }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(List)
