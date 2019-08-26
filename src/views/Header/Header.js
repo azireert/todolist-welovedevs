@@ -2,7 +2,7 @@ import React from 'react';
 import './Header.css';
 import Navbar from 'react-bootstrap/Navbar'
 
-function Header() {
+const Header = () => {
     return (
         <Navbar style={{ marginBottom: '2rem' }} bg="dark" variant="dark">
             <Navbar.Brand href="#home">ToDoList</Navbar.Brand>

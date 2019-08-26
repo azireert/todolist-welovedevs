@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 
 
 
-function List (props){
+const List = (props) => {
     /*state = {
         firstname: "",
         lastname: "",
@@ -24,26 +24,42 @@ function List (props){
         this.delete = this.delete.bind(this);
         this.addWorker = this.addWorker.bind(this);
     }*/
-
+    const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [job, setJob] = useState("");
     const [list, setList] = useState([]);
 
-    function addWorker(e) {
-        var newWorker = {
-            id: list.length+1,
-            firstname: firstname,
-            lastname: lastname,
-            job: job
-        };
+    if (!isListeningToFirebase) {
+        setIsListeningToFirebase(true);
+        firebase.database().ref('/workers').on('value', snapshot => {
+            setList(snapshot.val());
+        })
+    }
 
-        this.state.list.push(newWorker);
+
+
+    function addWorker(e) {
+
+        //this.state.list.push(newWorker);
 
         /*const action = { type: "ADD_WORKER", list: list, value: newWorker }
         props.dispatch(action)*/
+        //firebase.database().ref('/').set(list);
+        var newWorker = {};
 
-        firebase.database().ref('/').set(list);
+        firebase.database().ref('/workers').push().then((snap) => {
+            newWorker = {
+                id: snap.key,
+                firstname: firstname,
+                lastname: lastname,
+                job: job,
+                position: Object.keys(list).length+1
+            };
+
+            firebase.database().ref('/workers/'+ newWorker.id).set(newWorker);
+        })
+
 
 
         setFirstName("");
@@ -53,11 +69,7 @@ function List (props){
     }
 
     function deleteWorker (id) {
-
-        list.filter(el => el.id !== id )
-
-        let idRef = id-1;
-        firebase.database().ref('/' + idRef).remove();
+        firebase.database().ref(`/workers/${id}`).remove();
 
     }
 
@@ -77,21 +89,6 @@ function List (props){
 
 
     useEffect(() => {
-        const workersRef = firebase.database().ref('/');
-        workersRef.on('value',(snapshot) => {
-            let workers = snapshot.val();
-            let newState = [];
-            for ( let worker in workers) {
-                newState.push({
-                    id: workers[worker].id,
-                    firstname: workers[worker].firstname,
-                    lastname: workers[worker].lastname,
-                    job: workers[worker].job
-                });
-            }
-
-            setList(newState)
-        });
     });
 
         return (

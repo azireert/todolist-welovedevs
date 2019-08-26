@@ -1,8 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Link, BrowserRouter as Router, Switch} from 'react-router-dom'
+import { Route, BrowserRouter as Router, Switch} from 'react-router-dom'
 import './index.css';
-import App from './App';
 import List from './views/List/List';
 import DetailWorker from './views/DetailWorker/DetailWorker';
 import * as serviceWorker from './serviceWorker';

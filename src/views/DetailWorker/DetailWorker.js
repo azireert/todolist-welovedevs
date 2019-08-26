@@ -10,7 +10,7 @@ import firebase from "../../firebase/firebase";
 
 
 
-function DetailWorker(props) {
+const DetailWorker = (props) => {
     const { params } = props.match;
     const [worker, setWorker] = useState([]);
 
