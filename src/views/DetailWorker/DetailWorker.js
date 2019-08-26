@@ -7,32 +7,21 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import firebase from "../../firebase/firebase";
+import {Link} from "react-router-dom";
 
 
 
 const DetailWorker = (props) => {
     const { params } = props.match;
-    const [worker, setWorker] = useState([]);
+    const [worker, setWorker] = useState({});
+    const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
 
-    useEffect(() => {
-        const workersRef = firebase.database().ref('/');
-        workersRef.on('value',(snapshot) => {
-            let workers = snapshot.val();
-            let newState = [];
-            for ( let worker in workers) {
-                if (workers[worker].id === params.id-1) {
-                    newState.push({
-                        id: workers[worker].id,
-                        firstname: workers[worker].firstname,
-                        lastname: workers[worker].lastname,
-                        job: workers[worker].job
-                    });
-                }
-
-            }
-            setWorker(newState)
-        });
-    });
+    if (!isListeningToFirebase) {
+        setIsListeningToFirebase(true);
+        firebase.database().ref('/workers/'+params.id).on('value', snapshot => {
+            setWorker(snapshot.val());
+        })
+    }
     return (
         <Container>
             <Row>
@@ -41,12 +30,13 @@ const DetailWorker = (props) => {
                     <Card style={{ width: '18rem' }}>
                         <Card.Img variant="top" src={logo} />
                         <Card.Body>
-                            <Card.Title>{worker.id}</Card.Title>
+                            <Card.Title>{worker.firstname} {worker.lastname}</Card.Title>
                             <Card.Text>
-                                Some quick example text to build on the card title and make up the bulk of
-                                the card's content.
+                                {worker.job}
                             </Card.Text>
-                            <Button variant="primary">Go somewhere</Button>
+                            <Link to={'/'}>
+                            <Button variant="primary">Retour</Button>
+                            </Link>
                         </Card.Body>
                     </Card>
                 </Col>

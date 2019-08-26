@@ -28,7 +28,7 @@ const List = (props) => {
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [job, setJob] = useState("");
-    const [list, setList] = useState([]);
+    const [list, setList] = useState({});
 
     if (!isListeningToFirebase) {
         setIsListeningToFirebase(true);

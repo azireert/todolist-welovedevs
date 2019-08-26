@@ -2,7 +2,7 @@ const initialState = { list: [] }
 
 function manageList(state = initialState, action ) {
     let refList = action.list
-    let nextState;
+    let nextState = {};
     switch (action.type) {
         case 'ADD_WORKER':
             refList.push(action.value)
