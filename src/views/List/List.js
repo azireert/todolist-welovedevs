@@ -7,6 +7,8 @@ import Col from 'react-bootstrap/Col'
 import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
 import { connect } from 'react-redux'
+import {fetchToDos, completeToDo, addToDo}  from "../../actions";
+import {todosRef} from "../../firebase/firebase";
 
 
 
@@ -23,6 +25,7 @@ const List = (props) => {
         };
         this.delete = this.delete.bind(this);
         this.addWorker = this.addWorker.bind(this);
+
     }*/
     const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
     const [firstname, setFirstName] = useState("");
@@ -30,13 +33,13 @@ const List = (props) => {
     const [job, setJob] = useState("");
     const [list, setList] = useState({});
 
+
     if (!isListeningToFirebase) {
         setIsListeningToFirebase(true);
-        firebase.database().ref('/workers').on('value', snapshot => {
-            setList(snapshot.val());
-        })
+        todosRef.on("value", snapshot => {
+            setList(snapshot.val())
+        });
     }
-
 
 
     function addWorker(e) {
@@ -89,6 +92,7 @@ const List = (props) => {
 
 
     useEffect(() => {
+
     });
 
         return (
@@ -132,16 +136,10 @@ const List = (props) => {
         );
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({data}) => {
     return {
-        list: state.list
+        data
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        dispatch: (action) => { dispatch(action) }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(List)
+export default connect(mapStateToProps, {fetchToDos, completeToDo, addToDo})(List);

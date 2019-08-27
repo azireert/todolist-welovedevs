@@ -11,5 +11,7 @@ const config = {
 };
 
 firebase.initializeApp(config);
+const databaseRef = firebase.database().ref();
+export const todosRef = databaseRef.child("workers")
 
 export default firebase;

@@ -12,7 +12,6 @@ import Header from "./views/Header/Header";
 
 const routing = (
     <Provider store={Store}>
-
     <Router>
         <Header/>
         <div>
