@@ -5,8 +5,10 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
-import { connect } from 'react-redux'
+import {connect, useDispatch, useSelector} from 'react-redux'
 import {fetchToDos, completeToDo, addToDo}  from "../../actions";
+import workersReducers from "../../reducers/workers_reducer";
+import {bindActionCreators} from "redux";
 
 
 
@@ -14,7 +16,14 @@ const List = (props) => {
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [job, setJob] = useState("");
-    const {data} = props;
+
+
+    const {workers, currentUser} = props;
+
+    if (!currentUser || !currentUser.uid) {
+        return "Merci de vous connecter !"
+    }
+    const dispatch = useDispatch();
 
 
     function addWorker(e) {
@@ -22,7 +31,7 @@ const List = (props) => {
             firstname: firstname,
             lastname: lastname,
             job: job,
-            position: Object.keys(data).length+1
+            position: Object.keys(workers).length+1
         };
 
         props.addToDo(newWorker);
@@ -41,20 +50,16 @@ const List = (props) => {
         setFirstName(e.target.value);
     }
 
-    function handleLastNameChange(e) {
-        setLastName(e.target.value);
-    }
 
-    function handleJobChange(e) {
+    const handleJobChange = (e) => {
         setJob(e.target.value);
     }
 
 
-
-
     useEffect(() => {
-        props.fetchToDos();
+        fetchToDos()(dispatch);
     });
+
 
         return (
             <div>
@@ -73,7 +78,7 @@ const List = (props) => {
                                 <Form.Label>Nom</Form.Label>
                                 <Form.Control type="text" placeholder="Entrez votre nom"
                                               value={lastname}
-                                              onChange={handleLastNameChange}/>
+                                              />
                             </Form.Group>
                             <Form.Group controlId="formGroupJob">
                                 <Form.Label>Job</Form.Label>
@@ -90,17 +95,27 @@ const List = (props) => {
                 </Row>
                 <Row>
                     <Col></Col>
-                    <Col><ListDetail delete={deleteWorker} workers={data}/></Col>
+                    <Col><ListDetail delete={deleteWorker} workers={workers}/></Col>
                     <Col></Col>
                 </Row>
             </div>
         );
 }
 
-const mapStateToProps = ({data}) => {
+const mapStateToProps = ({workersReducers, userReducer}) => {
     return {
-        data
+        workers: workersReducers.workers,
+        currentUser: userReducer.firebaseUser
     }
 }
 
-export default connect(mapStateToProps, {fetchToDos, completeToDo, addToDo})(List);
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            completeToDo,
+            addToDo
+        },
+        dispatch
+    );
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);
