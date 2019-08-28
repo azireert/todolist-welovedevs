@@ -1,4 +1,4 @@
-const FETCH_TODOS = 'FETCH_TODOS';
+import { FETCH_TODOS } from "../actions/types";
 
 export default (state = {}, action) => {
     switch(action.type) {

@@ -1,69 +1,31 @@
 import React, {useState, useEffect} from 'react';
 import './List.css';
 import ListDetail from "../ListDetail/ListDetail";
-import firebase from '../../firebase/firebase.js';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import {Button} from "react-bootstrap";
 import {Form} from "react-bootstrap";
 import { connect } from 'react-redux'
 import {fetchToDos, completeToDo, addToDo}  from "../../actions";
-import {todosRef} from "../../firebase/firebase";
 
 
 
 const List = (props) => {
-    /*state = {
-        firstname: "",
-        lastname: "",
-        job: ""
-    }
-    constructor(){
-        super();
-        this.state = {
-            list : []
-        };
-        this.delete = this.delete.bind(this);
-        this.addWorker = this.addWorker.bind(this);
-
-    }*/
-    const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [job, setJob] = useState("");
-    const [list, setList] = useState({});
-
-
-    if (!isListeningToFirebase) {
-        setIsListeningToFirebase(true);
-        todosRef.on("value", snapshot => {
-            setList(snapshot.val())
-        });
-    }
+    const {data} = props;
 
 
     function addWorker(e) {
+        var newWorker = {
+            firstname: firstname,
+            lastname: lastname,
+            job: job,
+            position: Object.keys(data).length+1
+        };
 
-        //this.state.list.push(newWorker);
-
-        /*const action = { type: "ADD_WORKER", list: list, value: newWorker }
-        props.dispatch(action)*/
-        //firebase.database().ref('/').set(list);
-        var newWorker = {};
-
-        firebase.database().ref('/workers').push().then((snap) => {
-            newWorker = {
-                id: snap.key,
-                firstname: firstname,
-                lastname: lastname,
-                job: job,
-                position: Object.keys(list).length+1
-            };
-
-            firebase.database().ref('/workers/'+ newWorker.id).set(newWorker);
-        })
-
-
+        props.addToDo(newWorker);
 
         setFirstName("");
         setLastName("");
@@ -72,8 +34,7 @@ const List = (props) => {
     }
 
     function deleteWorker (id) {
-        firebase.database().ref(`/workers/${id}`).remove();
-
+        props.completeToDo(id)
     }
 
     function handleFirstNameChange(e) {
@@ -92,7 +53,7 @@ const List = (props) => {
 
 
     useEffect(() => {
-
+        props.fetchToDos();
     });
 
         return (
@@ -129,7 +90,7 @@ const List = (props) => {
                 </Row>
                 <Row>
                     <Col></Col>
-                    <Col><ListDetail delete={deleteWorker} workers={list}/></Col>
+                    <Col><ListDetail delete={deleteWorker} workers={data}/></Col>
                     <Col></Col>
                 </Row>
             </div>

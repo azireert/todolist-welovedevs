@@ -6,9 +6,13 @@ import List from './views/List/List';
 import DetailWorker from './views/DetailWorker/DetailWorker';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Store from "./store/configureStore";
 import {Provider} from "react-redux";
 import Header from "./views/Header/Header";
+import {applyMiddleware, createStore} from "redux";
+import reducers from "./reducers";
+import reduxThunk from "redux-thunk";
+
+const Store = createStore(reducers, {}, applyMiddleware(reduxThunk))
 
 const routing = (
     <Provider store={Store}>

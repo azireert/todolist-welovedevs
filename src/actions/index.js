@@ -1,8 +1,17 @@
 import {todosRef} from '../firebase/firebase'
+import { FETCH_TODOS} from "./types";
 
-const FETCH_TODOS = 'FETCH_TODOS';
 export const addToDo = newToDo => async dispatch => {
-    todosRef.push().set(newToDo);
+    todosRef.push().then((snap) => {
+        const newWorker = {
+            id: snap.key,
+            firstname: newToDo.firstname,
+            lastname: newToDo.lastname,
+            job: newToDo.job,
+            position: newToDo.position
+        };
+        todosRef.child(newWorker.id).set(newWorker);
+    })
 };
 export const completeToDo = completeToDo => async dispatch => {
     todosRef.child(completeToDo).remove();
