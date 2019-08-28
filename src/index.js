@@ -16,17 +16,17 @@ const Store = createStore(reducers, {}, applyMiddleware(reduxThunk))
 
 const routing = (
     <Provider store={Store}>
-    <Router>
-        <Header/>
-        <div>
-            <Switch>
-            <Route exact path="/" component={List} />
-            <Route path="/List" component={List} />
-            <Route path="/Details/:id" component={DetailWorker} />
-            <Route component={List} />
-            </Switch>
-        </div>
-    </Router>
+        <Router>
+            <Header/>
+            <div>
+                <Switch>
+                    <Route exact path="/" component={List} />
+                    <Route path="/List" component={List} />
+                    <Route path="/Details/:id" component={DetailWorker} />
+                    <Route component={List} />
+                </Switch>
+            </div>
+        </Router>
     </Provider>
 )
 
