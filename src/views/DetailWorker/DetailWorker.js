@@ -8,20 +8,20 @@ import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import firebase from "../../firebase/firebase";
 import {Link} from "react-router-dom";
+import {useSelector} from "react-redux";
 
-
+import {fetchToDo}
 
 const DetailWorker = (props) => {
     const { params } = props.match;
-    const [worker, setWorker] = useState({});
     const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
+    const worker = useSelector(state => state.workersReducers.workers[params.id])
 
-    if (!isListeningToFirebase) {
-        setIsListeningToFirebase(true);
-        firebase.database().ref('/workers/'+params.id).on('value', snapshot => {
-            setWorker(snapshot.val());
-        })
+    if (!worker) {
+        fetchToDo(id)(dispatch)
+        return 'Loading'
     }
+
     return (
         <Container>
             <Row>

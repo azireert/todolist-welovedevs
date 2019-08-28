@@ -10,17 +10,30 @@ export const addToDo = newToDo => async dispatch => {
             job: newToDo.job,
             position: newToDo.position
         };
+
+        set(myObject, 'workers.worker.list.qsd', 42);
         todosRef.child(newWorker.id).set(newWorker);
     })
 };
 export const completeToDo = completeToDo => async dispatch => {
     todosRef.child(completeToDo).remove();
 };
+
 export const fetchToDos = () => async dispatch => {
     todosRef.on("value", snapshot => {
         dispatch({
             type: FETCH_TODOS,
             payload: snapshot.val()
+        });
+    });
+};
+
+export const fetchToDo = (id) => async dispatch => {
+    todosRef.on("value", snapshot => {
+        dispatch({
+            type: FETCH_TODO,
+            worker: snapshot.val(),
+            id
         });
     });
 };
