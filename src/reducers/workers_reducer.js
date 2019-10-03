@@ -1,4 +1,4 @@
-import { FETCH_TODOS } from "../actions/types";
+import { FETCH_TODOS, FETCH_TODO } from "../actions/types";
 
 const initialState = {
     workers: {},
@@ -6,29 +6,26 @@ const initialState = {
 };
 
 export default (state = initialState, action) => {
+    console.log(action)
     switch(action.type) {
         case FETCH_TODOS: {
-            const newState = {
+            return {
                 ...state,
                 workers: {
                     ...action.payload
-                }
+                },
+                hasReceivedWorkers: true
             };
-
-            return newState;
         }
-
-
         case FETCH_TODO: {
-            const newState = {
+            return {
                 ...state,
                 workers: {
                     ...state.workers,
                     [action.id]: action.worker
-                }
+                },
+                hasReceivedWorkers: true
             };
-
-            return newState;
         }
 
         default:

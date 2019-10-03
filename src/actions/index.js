@@ -27,11 +27,12 @@ export const fetchToDos = () => async dispatch => {
 };
 
 export const fetchToDo = (id) => async dispatch => {
-    todosRef.on("value", snapshot => {
+    todosRef.child(id).on("value", snapshot => {
+        console.log("ok", snapshot.val())
         dispatch({
             type: FETCH_TODO,
-            worker: snapshot.val(),
-            id
+            id,
+            worker: snapshot.val()
         });
     });
 };

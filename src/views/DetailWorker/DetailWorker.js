@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import './DetailWorker.css';
 import Card from 'react-bootstrap/Card'
 import { Button } from 'react-bootstrap';
@@ -6,21 +6,28 @@ import logo from '../../avatar.jpg';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
-import firebase from "../../firebase/firebase";
 import {Link} from "react-router-dom";
-import {useSelector} from "react-redux";
-
-import {fetchToDo}
+import {bindActionCreators} from "redux";
+import {fetchToDo} from "../../actions";
+import {connect} from "react-redux";
 
 const DetailWorker = (props) => {
     const { params } = props.match;
-    const [isListeningToFirebase, setIsListeningToFirebase] = useState(false);
-    const worker = useSelector(state => state.workersReducers.workers[params.id])
+    const worker = props.workers[params.id];
 
-    if (!worker) {
-        fetchToDo(id)(dispatch)
-        return 'Loading'
+    useEffect(() => {
+        if(!props.hasReceivedWorkers) {
+            props.fetchToDo(params.id)
+        }
+    },[props.hasReceivedWorkers]);
+
+    if(!worker) {
+        return "loading..";
     }
+
+
+
+
 
     return (
         <Container>
@@ -47,4 +54,19 @@ const DetailWorker = (props) => {
     );
 }
 
-export default DetailWorker;
+const mapStateToProps = ({workersReducers, userReducer}) => {
+    return {
+        workers: workersReducers.workers,
+        currentUser: userReducer.firebaseUser
+    }
+}
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            fetchToDo
+        },
+        dispatch
+    );
+
+export default connect(mapStateToProps, mapDispatchToProps)(DetailWorker);

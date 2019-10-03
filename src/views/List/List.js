@@ -1,35 +1,27 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './List.css';
 import ListDetail from "../ListDetail/ListDetail";
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import {Button} from "react-bootstrap";
-import {Form} from "react-bootstrap";
-import {connect, useDispatch, useSelector} from 'react-redux'
-import {fetchToDos, completeToDo, addToDo}  from "../../actions";
-import workersReducers from "../../reducers/workers_reducer";
+import {Button, Form} from "react-bootstrap";
+import {connect} from 'react-redux'
+import {addToDo, completeToDo, fetchToDos} from "../../actions";
 import {bindActionCreators} from "redux";
-
 
 
 const List = (props) => {
     const [firstname, setFirstName] = useState("");
     const [lastname, setLastName] = useState("");
     const [job, setJob] = useState("");
-
-
     const {workers, currentUser} = props;
 
-    if (!currentUser || !currentUser.uid) {
-        return "Merci de vous connecter !"
-    }
-    const dispatch = useDispatch();
 
 
-    function addWorker(e) {
+
+    const addWorker = (e) => {
         var newWorker = {
-            firstname: firstname,
             lastname: lastname,
+            firstname: firstname,
             job: job,
             position: Object.keys(workers).length+1
         };
@@ -42,12 +34,16 @@ const List = (props) => {
 
     }
 
-    function deleteWorker (id) {
+    const deleteWorker = (id) => {
         props.completeToDo(id)
     }
 
-    function handleFirstNameChange(e) {
+    const handleFirstNameChange = (e) => {
         setFirstName(e.target.value);
+    }
+
+    const handleLastNameChange = (e) => {
+        setLastName(e.target.value);
     }
 
 
@@ -57,8 +53,11 @@ const List = (props) => {
 
 
     useEffect(() => {
-        fetchToDos()(dispatch);
-    });
+        if(!props.hasReceivedWorkers){
+            props.fetchToDos();
+        }
+
+    }, [props.hasReceivedWorkers]);
 
 
         return (
@@ -78,6 +77,7 @@ const List = (props) => {
                                 <Form.Label>Nom</Form.Label>
                                 <Form.Control type="text" placeholder="Entrez votre nom"
                                               value={lastname}
+                                              onChange={handleLastNameChange}
                                               />
                             </Form.Group>
                             <Form.Group controlId="formGroupJob">
@@ -112,6 +112,7 @@ const mapStateToProps = ({workersReducers, userReducer}) => {
 const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
+            fetchToDos,
             completeToDo,
             addToDo
         },
